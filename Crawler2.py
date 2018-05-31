@@ -7,26 +7,21 @@ import os
 import csv
 import sys
 import time
+import pymysql
 import random
-import demjson
+from IPSpider import checking as proxys
 reload(sys)
 
-
-# IP池
-def ipPool():
-    # IPList =
-    pass
 
 
 # 模拟浏览器
 def getHTMLText(url):
     try:
         # 01-设置用户代理池
-        # UPPOOL = ["Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393"]
-        # headers = random.choice(UPPOOL)
         headers = {
            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'}
-        r = requests.get(url, headers=headers, timeout=50)
+        r = requests.get(url, headers=headers, timeout=50,proxies=random.choice(checking()))
+        # r = requests.get(url, headers=headers, timeout=50)
         r.raise_for_status()
         r.encoding = r.apparent_encoding
         return r.text
@@ -56,25 +51,45 @@ def getCommodityComments(url, count):
     # writer.writerow(('count','users','comment'))
     writer.writerow(("id", "name", "content"))
 
-    # try:
-    while count < max:
-        time.sleep(10)
-        res = requests.get(url[:-1] + str(page))
-        page = page + 1
-        jc = json.loads(res.text.strip().strip('()'))
-        jc = jc['comments']
-        # writer.writerow(("id","name","content"))
-        for j in jc:
-            users.append(j['user']['nick'])
-            comments.append(j['content'])
-            print(count + 1, '>>', users[count], '\n        ', comments[count])
-            writer.writerow((count, users[count], comments[count]))
-            count = count + 1
-# except:
-#     print("爬取中断+count")
-#     print(count)
-#     getCommodityComments(url,count)
+    try:
+        while count < max:
+            time.sleep(1)
+            res = requests.get(url[:-1] + str(page))
+            page = page + 1
+            jc = json.loads(res.text.strip().strip('()'))
+            jc = jc['comments']
+            # writer.writerow(("id","name","content"))
+            for j in jc:
+                users.append(j['user']['nick'])
+                comments.append(j['content'])
+                print(count + 1, '>>', users[count], '\n        ', comments[count])
+                writer.writerow((count, users[count], comments[count]))
+                count = count + 1
+    except:
+        print("爬取中断+count")
+
+
+def checking():
+    # headers = {'User-Agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36'}
+    url = 'https://www.baidu.com'
+    fp = open('host.txt','r')
+    ips = fp.readlines()
+    proxys = list()
+    for p in ips:
+        ip =p.strip('\n').split('\t')
+        proxy = 'http:\\' +  ip[0] + ':' + ip[1]
+        proxies = {'proxy':proxy}
+        proxys.append(proxies)
+
+
+    for pro in proxys:
+        try :
+            s = requests.get(url,proxies = pro)
+            print (s)
+        except Exception as e:
+            print (e)
+    return proxys
 
 if __name__ == '__main__':
     count = 0
-    getCommodityComments('https://detail.tmall.com/item.htm?id=544439586789&', count)
+    getCommodityComments('https://detail.tmall.com/item.htm?id=550887826096&', count)

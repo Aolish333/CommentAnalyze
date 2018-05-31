@@ -46,10 +46,10 @@ def insertdb(db):
             # 提交到数据库执行
         db.commit()
         print ('批量插入完成！')
-        except:
-            # Rollback in case there is any error
-            print '插入数据失败!'
-            db.rollback()
+        # except:
+        #     # Rollback in case there is any error
+        #     print '插入数据失败!'
+        #     db.rollback()
 
 def querydb(db):
     # 使用cursor()方法获取操作游标 
