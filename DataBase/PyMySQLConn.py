@@ -46,18 +46,16 @@ def insertdb(db):
             # 提交到数据库执行
         db.commit()
         print ('批量插入完成！')
-        # except:
-        #     # Rollback in case there is any error
-        #     print '插入数据失败!'
-        #     db.rollback()
+        except:
+            # Rollback in case there is any error
+            print '插入数据失败!'
+            db.rollback()
 
 def querydb(db):
     # 使用cursor()方法获取操作游标 
     cursor = db.cursor()
 
     # SQL 查询语句
-    #sql = "SELECT * FROM Student \
-    #    WHERE Grade > '%d'" % (80)
     sql = "SELECT * FROM testping"
     try:
         # 执行SQL语句
@@ -69,7 +67,7 @@ def querydb(db):
             Name = row[1]
             Commence = row[2]
             # 打印结果
-            print ("ID: %s, Name: %s, Grade: %s" % \
+            print ("ID: %s, Name: %s, Commence: %s" % \
                 (ID, Name, Commence))
     except:
         print ("Error: unable to fecth data")
