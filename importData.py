@@ -7,7 +7,6 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import jieba
 import pyLDAvis.sklearn
-import pymysql
 
 from DataBase.PyMySQLConn import connectdb
 

@@ -8,8 +8,8 @@ import csv
 import sys
 import time
 import pymysql
+import IPSpider
 import random
-from IPSpider import checking as proxys
 reload(sys)
 
 
@@ -20,7 +20,7 @@ def getHTMLText(url):
         # 01-设置用户代理池
         headers = {
            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'}
-        r = requests.get(url, headers=headers, timeout=50,proxies=random.choice(checking()))
+        r = requests.get(url, headers=headers, timeout=50,proxies=random.choice(IPSpider.checking()))
         # r = requests.get(url, headers=headers, timeout=50)
         r.raise_for_status()
         r.encoding = r.apparent_encoding
@@ -68,27 +68,6 @@ def getCommodityComments(url, count):
     except:
         print("爬取中断+count")
 
-
-def checking():
-    # headers = {'User-Agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36'}
-    url = 'https://www.baidu.com'
-    fp = open('host.txt','r')
-    ips = fp.readlines()
-    proxys = list()
-    for p in ips:
-        ip =p.strip('\n').split('\t')
-        proxy = 'http:\\' +  ip[0] + ':' + ip[1]
-        proxies = {'proxy':proxy}
-        proxys.append(proxies)
-
-
-    for pro in proxys:
-        try :
-            s = requests.get(url,proxies = pro)
-            print (s)
-        except Exception as e:
-            print (e)
-    return proxys
 
 if __name__ == '__main__':
     count = 0
